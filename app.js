@@ -13,9 +13,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Home page
-app.get('/', (req, res) => {
-    res.render('index', { results: null, error: null, usernames: '' });
+// Home page - load default usernames
+app.get('/', async (req, res) => {
+    const defaultUsernames = [
+        'purnakunche',
+        'revanth_1807',
+        'anrup'
+    ];
+
+    const results = await Promise.all(
+        defaultUsernames.map(fetchUserData)
+    );
+
+    res.render('index', {
+        results,
+        error: null,
+        usernames: defaultUsernames.join('\n')
+    });
 });
 
 // Fetch CodeChef user data by scraping the profile page
